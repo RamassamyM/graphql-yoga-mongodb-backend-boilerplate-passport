@@ -38,9 +38,9 @@ export default function () {
     //   console.log(error)
     //   return error
     // },
-    formatResponse: response => {
-      logResponse(response)
-      return response
+    formatResponse: res => {
+      logResponse(res)
+      return res
     },
   }
   const server = new GraphQLServer({
@@ -56,10 +56,10 @@ export default function () {
         // },
       ],
     },
-    context: async ({ request, response }) => {
+    context: async ({ request }) => {
       logRequest(request)
-      const { authToken, currentUser } = await getTokenAndCurrentUser(request)
-      return { request, response, currentUser }
+      const { clearToken, currentUser } = await getTokenAndCurrentUser(request)
+      return { 'request': Object.assign({}, request, { 'currentUser': currentUser, 'clearToken': clearToken }) }
     },
     // validationRules: [NoIntrospection], // TODO change the library to get it working with Apollo-server
   })

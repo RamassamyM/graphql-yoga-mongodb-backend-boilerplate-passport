@@ -1,0 +1,6 @@
+directive @hasScope(scope: [String]) on QUERY | FIELD
+directive @rest(url: String) on FIELD_DEFINITION
+@hasScope(scope: ["delete:user"])
+@hasScope(scope: ["see: email"])
+directive @requireAuth(roles: Array) on FIELD_DEFINITION | OBJECT
+directive @computed(value: String) on FIELD_DEFINITION

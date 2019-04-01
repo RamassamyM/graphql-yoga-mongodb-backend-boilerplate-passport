@@ -1,8 +1,19 @@
+directive @requireAuth(roles: [Role] = [admin]) on FIELD_DEFINITION
+directive @deprecated(reason: String = "No longer supported") on FIELD_DEFINITION | ENUM_VALUE
+directive @computed(value: String) on FIELD_DEFINITION
+directive @hasScope(scopes: [String]) on FIELD_DEFINITION
+
+enum Role {
+  user
+  admin
+}
+
 type User {
   _id: ID
   firstname: String
-  lastname: String
+  lastname: String @hasScope
   email: String
+  fullname: String @computed(value: "$firstname $lastname")
   avatarColor: String
 }
 
@@ -12,9 +23,9 @@ type AuthPayload {
 }
 
 type Query {
-  users: [User]
-  user(_id: ID!): User
-  me: User
+  users: [User] @requireAuth
+  user(_id: ID!): User @requireAuth(roles: [admin, user]) @hasScope(scopes: ["User:Read"])
+  me: User @requireAuth(roles: [admin, user])
 }
 
 type Confirmation {
@@ -23,10 +34,10 @@ type Confirmation {
 }
 
 type Mutation {
-  captureEmail(email: String!): User
+  registerWithEmail(email: String!): User
   signup(_id: ID!, firstname: String!, lastname: String!, password: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  editUser(_id: ID!, firstname: String, lastname: String): User
-  deleteUserWithPassword(_id: ID!, password: String!): Confirmation
-  deleteUser(_id: ID!): User
+  editUser(_id: ID!, firstname: String, lastname: String): User @requireAuth(roles: [admin, user])
+  deleteUserWithPassword(_id: ID!, password: String!): Confirmation @requireAuth(roles: [admin, user])
+  deleteUser(_id: ID!): User @requireAuth(roles: [admin, user])
 }
