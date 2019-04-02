@@ -19,35 +19,20 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  local: {
-    email: {
-      type: String,
-      unique: true,
-    },
-    password: String,
-    isAccountValidatedByEmail: {
-      type: Boolean,
-      default: false,
-    },
+  email: {
+    type: String,
+    unique: true,
   },
-  facebook: {
-    id: String,
-    token: String,
-    name: String,
-    email: String,
+  password: String,
+  isAccountValidatedByEmail: {
+    type: Boolean,
+    default: false,
   },
-  twitter: {
-    id: String,
-    token: String,
-    displayName: String,
-    username: String,
-  },
-  google: {
-    id: String,
-    token: String,
-    email: String,
-    name: String,
-  },
+  provider: String,
+  providerId: String,
+  providerToken: String,
+  displayNameByProvider: String,
+  lastlogged: Date,
 }, { timestamps: true })
 
 userSchema.methods.validPassword = function (password) {

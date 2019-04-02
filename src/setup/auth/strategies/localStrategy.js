@@ -1,5 +1,5 @@
 import { Strategy as LocalStrategy } from 'passport-local'
-import User from '../../../models/user.model'
+import User from './../../../models/user.model'
 
 export default function (passport) {
   passport.use(

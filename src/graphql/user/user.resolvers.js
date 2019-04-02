@@ -1,5 +1,6 @@
-// import { GraphQLScalarType } from 'graphql'
-// import moment from 'moment'
+import { GraphQLScalarType } from 'graphql'
+import GraphQLJSON from 'graphql-type-json'
+import moment from 'moment'
 import User from '../../models/user.model'
 import { WrongCredentialsError, EmailError, DeleteError, EditError } from './user.errors'
 import getRandomAvatarColor from '../utils/getRandomAvatarColor'
@@ -11,28 +12,22 @@ const userLocationInContext = 'request.currentUser'
 
 export default {
   Query: {
-    users: (root, args, context) => User.find({}, '_id email firstname lastname avatarColor'),
-    user: (root, args, context) => User.findOne({ _id: args._id }, '_id firstname lastname avatarColor local.email'),
+    users: (root, args, context) => User.find({}, '_id email firstname lastname avatarColor role username displayNameByProvider provider isSignedUp isAccountValidatedByEmail'),
+    user: (root, args, context) => User.findOne({ _id: args._id }, '_id firstname lastname avatarColor email username'),
     me: (root, args, context) => context.request.currentUser,
   },
   User: {
-    email: (user) => {
-      if (user.local && user.local.email) return user.local.email
-      if (user.facebook && user.facebook.email) return user.facebook.email
-      if (user.google && user.google.email) return user.google.email
-      return null
-    },
     // fullname: (user) => `$(user.firstname) $(user.lastname)`,
   },
   Mutation: {
     registerWithEmail: async (root, { email }, context) => {
       try {
-        const userWithSameEmailInDB = await User.findOne({ 'local.email': email })
+        const userWithSameEmailInDB = await User.findOne({ email })
         if (userWithSameEmailInDB) {
           console.log(`A connexion ask to register with email already used : ${email}`)
           throw new EmailError()
         }
-        return User.create({ 'local.email': email })
+        return User.create({ email })
       } catch (err) {
         throw err
       }
@@ -93,4 +88,12 @@ export default {
       return user
     },
   },
+  Date: new GraphQLScalarType({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    parseValue: (value) => moment(value).toDate(),
+    serialize: (value) => value.getTime(),
+    parseLiteral: (ast) => ast,
+  }),
+  JSON: GraphQLJSON,
 }

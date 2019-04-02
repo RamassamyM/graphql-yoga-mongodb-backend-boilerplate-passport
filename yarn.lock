@@ -4238,6 +4238,11 @@ graphql-tools@^4.0.0, graphql-tools@^4.0.4:
     iterall "^1.1.3"
     uuid "^3.1.0"
 
+graphql-type-json@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/graphql-type-json/-/graphql-type-json-0.2.4.tgz#545af27903e40c061edd30840a272ea0a49992f9"
+  integrity sha512-/tq02ayMQjrG4oDFDRLLrPk0KvJXue0nVXoItBe7uAdbNXjQUu+HYCBdAmPLQoseVzUKKMzrhq2P/sfI76ON6w==
+
 graphql-yoga@^1.17.4:
   version "1.17.4"
   resolved "https://registry.yarnpkg.com/graphql-yoga/-/graphql-yoga-1.17.4.tgz#6d325a6270399edf0776fb5f60a2e9e19512e63c"
@@ -6356,6 +6361,13 @@ passport-ldapauth@^2.1.2:
     "@types/passport" "^1.0.0"
     ldapauth-fork "^4.2.0"
     passport-strategy "^1.0.0"
+
+passport-local@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/passport-local/-/passport-local-1.0.0.tgz#1fe63268c92e75606626437e3b906662c15ba6ee"
+  integrity sha1-H+YyaMkudWBmJkN+O5BmYsFbpu4=
+  dependencies:
+    passport-strategy "1.x.x"
 
 passport-oauth1@1.x.x:
   version "1.1.0"

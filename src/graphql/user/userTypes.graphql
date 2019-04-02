@@ -3,6 +3,9 @@ directive @deprecated(reason: String = "No longer supported") on FIELD_DEFINITIO
 directive @computed(value: String) on FIELD_DEFINITION
 directive @hasScope(scopes: [String]) on FIELD_DEFINITION
 
+scalar Date
+scalar JSON
+
 enum Role {
   user
   admin
@@ -10,11 +13,19 @@ enum Role {
 
 type User {
   _id: ID
+  email: String
   firstname: String
   lastname: String @hasScope
-  email: String
   fullname: String @computed(value: "$firstname $lastname")
+  username: String
+  provider: String
+  role: String
+  displayNameByProvider: String
   avatarColor: String
+  isSignedUp: Boolean
+  isAccountValidatedByEmail: Boolean
+  lastLogged: Date
+  createdAt: Date
 }
 
 type AuthPayload {
@@ -23,7 +34,7 @@ type AuthPayload {
 }
 
 type Query {
-  users: [User] @requireAuth
+  users: [User] @requireAuth(roles: [admin, user])
   user(_id: ID!): User @requireAuth(roles: [admin, user]) @hasScope(scopes: ["User:Read"])
   me: User @requireAuth(roles: [admin, user])
 }
@@ -37,7 +48,7 @@ type Mutation {
   registerWithEmail(email: String!): User
   signup(_id: ID!, firstname: String!, lastname: String!, password: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  editUser(_id: ID!, firstname: String, lastname: String): User @requireAuth(roles: [admin, user])
+  editUser(_id: ID!, firstname: String, lastname: String, avatarColor: String): User @requireAuth(roles: [admin, user])
   deleteUserWithPassword(_id: ID!, password: String!): Confirmation @requireAuth(roles: [admin, user])
   deleteUser(_id: ID!): User @requireAuth(roles: [admin, user])
 }

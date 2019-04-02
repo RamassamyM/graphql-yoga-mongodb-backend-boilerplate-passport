@@ -5,7 +5,7 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import getTokenAndCurrentUser from './utils/getTokenAndCurrentUser'
 import { logRequest, logResponse } from './utils/debugLogger'
-// import NoIntrospection from 'graphql-disable-introspection'
+import NoIntrospection from 'graphql-disable-introspection'
 // import passport from 'passport'
 // import compression from 'compression'
 import {
@@ -19,10 +19,12 @@ import {
   GRAPHQL_ENDPOINT,
   PLAYGROUND_ENDPOINT,
   GRAPHQL_DEBUG,
+  ENV,
 } from '../config'
 
 export default function () {
-  console.log('Starting server graphql')
+  console.log(`Starting server graphql in mode ${ENV}`)
+  const rules = ENV === 'production' ? [NoIntrospection] : []
   const serverOptions = {
     port: PORT,
     endpoint: GRAPHQL_ENDPOINT,
@@ -30,6 +32,7 @@ export default function () {
     playground: PLAYGROUND_ENDPOINT,
     debug: GRAPHQL_DEBUG || false,
     tracing: GRAPHQL_DEBUG || false,
+    validationRules: rules,
     // https: {
     //   cert: CERT,
     //   key: KEY,
@@ -44,6 +47,7 @@ export default function () {
     },
   }
   const server = new GraphQLServer({
+    // introspection: false,
     schema,
     playground: {
       settings: {
@@ -61,7 +65,6 @@ export default function () {
       const { clearToken, currentUser } = await getTokenAndCurrentUser(request)
       return { 'request': Object.assign({}, request, { 'currentUser': currentUser, 'clearToken': clearToken }) }
     },
-    // validationRules: [NoIntrospection], // TODO change the library to get it working with Apollo-server
   })
 
   server.express.use(helmet())

@@ -17,3 +17,4 @@ export const DB_NAME = process.env.DB_NAME || 'appDB'
 // Set these debug options to true to console log all graphql queries infos and mongoose database queries
 export const DB_DEBUG = process.env.DB_DEBUG ? process.env.DB_DEBUG === 'true' : false
 export const GRAPHQL_DEBUG = process.env.GRAPHQL_DEBUG ? process.env.GRAPHQL_DEBUG === 'true' : false
+export const ENV = process.env.NODE_ENV || process.env.ENV || 'production'
