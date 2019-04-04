@@ -1,3 +1,4 @@
+import fs from 'fs'
 require('dotenv').config()
 
 // Explicit
@@ -5,7 +6,7 @@ export const MONGO_URI = process.env.MONGODB_URI
 
 // Have Defaults
 export const PORT = process.env.PORT || 5000
-export const SECRET = process.env.SECRET
+export const JWT_SECRET = process.env.JWT_SECRET
 export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:8080'
 export const PUBLIC_URL = process.env.PUBLIC_URL || 'http://localhost:5000'
 export const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || undefined
@@ -18,3 +19,9 @@ export const DB_NAME = process.env.DB_NAME || 'appDB'
 export const DB_DEBUG = process.env.DB_DEBUG ? process.env.DB_DEBUG === 'true' : false
 export const GRAPHQL_DEBUG = process.env.GRAPHQL_DEBUG ? process.env.GRAPHQL_DEBUG === 'true' : false
 export const ENV = process.env.NODE_ENV || process.env.ENV || 'production'
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
+export const FACEBOOK_CLIENT_ID = process.env.FACEBOOK_CLIENT_ID
+export const FACEBOOK_CLIENT_SECRET = process.env.FACEBOOK_CLIENT_SECRET
+export const JWT_PRIVATEKEY = fs.readFileSync(`${__dirname}/../${process.env.PATH_TO_PRIVATEKEY}`, 'utf8')
+export const JWT_PUBLICKEY = fs.readFileSync(`${__dirname}/../${process.env.PATH_TO_PUBLICKEY}`, 'utf8')

@@ -1,3 +1,4 @@
+// Deprecated : graphql schema already defines authorized permittedParams
 export default async (params, filters) => {
   let permittedParams = {}
   await function () {

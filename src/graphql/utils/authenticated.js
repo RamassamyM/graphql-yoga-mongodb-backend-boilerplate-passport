@@ -1,3 +1,5 @@
+// Deprecated : use only in resolver but prefer schemadirectives
+
 import { AuthenticationError } from 'apollo-server-errors'
 
 // exemple : use in resolver :

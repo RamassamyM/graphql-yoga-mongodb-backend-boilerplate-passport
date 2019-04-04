@@ -1,15 +1,15 @@
 import { GRAPHQL_DEBUG } from '../../config'
 
-export function logRequest (request) {
+export function logRequest (req) {
   if (GRAPHQL_DEBUG) {
-    console.log('\n\n\n' + request.method + ' ' + request.url + ' - referer: ' + request.headers.referer + ' - query name: ' + request.body.operationName + ' - variables:')
-    console.log(request.body.variables)
+    console.log('\n\n\n' + req.method + ' ' + req.url + ' - referer: ' + req.headers.referer + ' - query name: ' + req.body.operationName + ' - variables:')
+    console.log(req.body.variables)
   }
 }
 
-export function logResponse (response) {
+export function logResponse (res) {
   if (GRAPHQL_DEBUG) {
-    console.log('_Response: ')
-    console.log(response)
+    console.log('Response: ')
+    console.log(res)
   }
 }

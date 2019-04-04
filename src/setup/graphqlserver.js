@@ -3,10 +3,9 @@ import { GraphQLServer } from 'graphql-yoga'
 import schema from '../graphql/schema'
 import morgan from 'morgan'
 import helmet from 'helmet'
-import getTokenAndCurrentUser from './utils/getTokenAndCurrentUser'
+import getJwtTokenAndCurrentUser from './utils/getJwtTokenAndCurrentUser'
 import { logRequest, logResponse } from './utils/debugLogger'
 import NoIntrospection from 'graphql-disable-introspection'
-// import passport from 'passport'
 // import compression from 'compression'
 import {
   PORT,
@@ -60,15 +59,19 @@ export default function () {
         // },
       ],
     },
-    context: async ({ request }) => {
-      logRequest(request)
-      const { clearToken, currentUser } = await getTokenAndCurrentUser(request)
-      return { 'request': Object.assign({}, request, { 'currentUser': currentUser, 'clearToken': clearToken }) }
+    context: async ({ request, response }) => {
+      const req = request
+      const res = response
+      logRequest(req)
+      const { clearToken, currentUser } = await getJwtTokenAndCurrentUser(req)
+      return { 'req': Object.assign({}, req, { 'currentUser': currentUser, 'clearToken': clearToken }), res }
     },
   })
 
   server.express.use(helmet())
   server.express.use(morgan('dev'))
-  server.start(serverOptions, ({ port }) => console.log(`🚀 API Server is running on port ${port} at ${PUBLIC_URL}${GRAPHQL_ENDPOINT}`))
-  // console.log(`API Subscriptions server is now running on ${subscriptionsEndpoint}`)
+  server.start(serverOptions, ({ port }) => {
+    console.log(`🚀 API Server is running on port ${port} at ${PUBLIC_URL}${GRAPHQL_ENDPOINT}`)
+    console.log(`API Subscriptions server is now running on ${SUBSCRIPTION_ENDPOINT}`)
+  })
 }

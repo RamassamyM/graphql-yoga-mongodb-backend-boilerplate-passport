@@ -14,7 +14,7 @@ export class HasScope extends SchemaDirectiveVisitor {
     field.resolve = async function (...args) {
       const [, , context] = args
       const providedScopes = await _get(context, scopeLocationInContext)
-      if (scopes && !providedScopes.some(providedScope => scopes.includes(providedScope))) {
+      if (scopes && (!providedScopes || !providedScopes.some(providedScope => scopes.includes(providedScope)))) {
         throw new AuthenticationError(
           'You need an authorization scope to perform this action.'
         )

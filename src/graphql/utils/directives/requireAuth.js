@@ -4,7 +4,7 @@ import { AuthenticationError } from 'apollo-server-errors'
 import _get from 'lodash/get'
 
 // The userLocationOnContext is defined in the creation of GraphqlServer in graphqlserver.js
-const userLocationInContext = 'request.currentUser'
+const userLocationInContext = 'req.currentUser'
 
 export class RequireAuth extends SchemaDirectiveVisitor {
   visitFieldDefinition (field) {

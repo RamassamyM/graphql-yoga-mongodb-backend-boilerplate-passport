@@ -1,7 +1,9 @@
-import { setupGoogleStrategy } from './strategies/googleStrategy'
-import { setupLocalStrategy } from './strategies/localStrategy'
+import { setupFacebookTokenStrategy } from './strategies/facebookTokenStrategy'
+import { setupGoogleTokenStrategy } from './strategies/googleTokenStrategy'
+import { setupJwtStrategy } from './strategies/jwtStrategy'
 
 export default function () {
-  setupGoogleStrategy()
-  // setupLocalStrategy()
+  setupFacebookTokenStrategy()
+  setupGoogleTokenStrategy()
+  setupJwtStrategy()
 }
