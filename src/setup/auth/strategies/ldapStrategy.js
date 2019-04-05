@@ -1,6 +1,6 @@
 import passport from 'passport'
 import LdapStrategy from 'passport-ldapauth'
-import { LDAP_URL, LDAP_BASE, PATH_TO_TLS_LDAP_PUBLIC_KEY } from '../../../config'
+import { LDAP_URL, LDAP_BASE, PATH_TO_TLS_LDAP_PUBLIC_KEY, LDAP_SEARCH_FILTER } from '../../../config'
 import fs from 'fs'
 
 export function setupLdapTokenStrategy () {
@@ -8,7 +8,7 @@ export function setupLdapTokenStrategy () {
     server: {
       url: LDAP_URL,
       searchBase: LDAP_BASE,
-      searchFilter: '(&(|(objectclass=inetOrgPerson))(uid={{username}}))',
+      searchFilter: LDAP_SEARCH_FILTER,
       searchAttributes: ['displayName', 'mail', 'givenName', 'uidNumber', 'uid'],
       tlsOptions: {
         ca: [ fs.readFileSync(PATH_TO_TLS_LDAP_PUBLIC_KEY) ],

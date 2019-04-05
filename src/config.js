@@ -27,4 +27,5 @@ export const JWT_PRIVATEKEY = fs.readFileSync(`${__dirname}/../${process.env.PAT
 export const JWT_PUBLICKEY = fs.readFileSync(`${__dirname}/../${process.env.PATH_TO_PUBLICKEY}`, 'utf8')
 export const LDAP_URL = process.env.LDAP_URL
 export const LDAP_BASE = process.env.LDAP_BASE
+export const LDAP_SEARCH_FILTER = process.env.LDAP_SEARCH_FILTER
 export const PATH_TO_TLS_LDAP_PUBLIC_KEY = process.env.PATH_TO_TLS_LDAP_PUBLIC_KEY
