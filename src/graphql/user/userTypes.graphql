@@ -15,7 +15,7 @@ type User {
   _id: ID
   email: String
   firstname: String
-  lastname: String 
+  lastname: String
   fullname: String @computed(value: "$firstname $lastname")
   username: String
   provider: String
@@ -35,6 +35,11 @@ type AuthPayload {
 
 input AuthInput {
   accessToken: String!
+}
+
+input LdapInput {
+  username: String!
+  password: String!
 }
 
 type Query {
@@ -57,4 +62,5 @@ type Mutation {
   deleteUser(_id: ID!): User @requireAuth(roles: [admin, user])
   authFacebook(input: AuthInput!): AuthPayload!
   authGoogle(input: AuthInput!): AuthPayload!
+  authLdap(input: LdapInput!): AuthPayload!
 }

@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   provider: String,
-  providerId:{ type: String, unique: true },
+  providerId: String,
   providerToken: String,
   refreshToken: String,
   displayNameByProvider: String,
@@ -93,7 +93,7 @@ function getEmail (profile) {
 }
 
 userSchema.statics.upsertGoogleUser = async function ({ accessToken, refreshToken, profile }) {
-  const query = { 'providerId': profile.id }
+  const query = { providerId: profile.id, provider: profile.provider }
   const update = {
     displayNameByProvider: profile.displayName || `${profile.name.givenName} ${profile.name.familyName}` || `${profile._json.first_name} ${profile._json.last_name}`,
     username: profile.displayName || `${profile.name.givenName} ${profile.name.familyName}` || `${profile._json.first_name} ${profile._json.last_name}`,
@@ -112,7 +112,7 @@ userSchema.statics.upsertGoogleUser = async function ({ accessToken, refreshToke
 }
 
 userSchema.statics.upsertFacebookUser = async function ({ accessToken, refreshToken, profile }) {
-  const query = { 'providerId': profile.id }
+  const query = { providerId: profile.id, provider: profile.provider }
   const update = {
     displayNameByProvider: profile.displayName || `${profile.name.givenName} ${profile.name.familyName}` || `${profile._json.first_name} ${profile._json.last_name}`,
     username: profile.displayName || `${profile.name.givenName} ${profile.name.familyName}` || `${profile._json.first_name} ${profile._json.last_name}`,
@@ -123,6 +123,22 @@ userSchema.statics.upsertFacebookUser = async function ({ accessToken, refreshTo
     provider: profile.provider || 'facebook',
     providerId: profile.id,
     refreshToken: refreshToken,
+    isSignedUp: true,
+  }
+  const options = { upsert: true, new: true, setDefaultsOnInsert: true }
+  return User.findOneAndUpdate(query, update, options)
+}
+
+userSchema.statics.upsertLdapUser = async function ({ userLdap }) {
+  const query = { providerId: userLdap.uidNumber, provider: 'ldap' }
+  const update = {
+    displayNameByProvider: userLdap.displayName || userLdap.givenName,
+    username: userLdap.uid || userLdap.displayName || userLdap.givenName,
+    firstname: userLdap.givenName || '',
+    lastname: userLdap.familyName || '',
+    email: userLdap.mail || '',
+    provider: 'ldap',
+    providerId: userLdap.uidNumber,
     isSignedUp: true,
   }
   const options = { upsert: true, new: true, setDefaultsOnInsert: true }

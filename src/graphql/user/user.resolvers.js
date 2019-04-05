@@ -6,6 +6,7 @@ import { WrongCredentialsError, EmailError, DeleteError, EditError } from './use
 import getRandomAvatarColor from '../utils/getRandomAvatarColor'
 import { authenticateFacebookPromise } from '../../setup/auth/strategies/facebookTokenStrategy'
 import { authenticateGooglePromise } from '../../setup/auth/strategies/googleTokenStrategy'
+import { authenticateLdapPromise } from '../../setup/auth/strategies/ldapStrategy'
 // import { authenticated } from '../utils/authenticated'
 import _get from 'lodash/get'
 
@@ -21,7 +22,7 @@ const throwErrorWithInfoFromPassport = (info) => {
         throw new Error('Something went wrong with Authentication API')
     }
   } else {
-    throw new Error('Data Error with Authentication API')
+    throw new Error(info.message || 'Data Error with Authentication API')
   }
 }
 
@@ -41,6 +42,16 @@ export default {
       // data contains the accessToken, refreshToken and profile from passport
       return authenticateFacebookPromise(req, res)
         .then(({ data, info }) => data ? User.upsertFacebookUser(data) : throwErrorWithInfoFromPassport(info))
+        .then(user => user ? ({ user: user, token: user.generateJWT() }) : new Error('Server error with user'))
+        .catch(err => { throw err })
+    },
+    authLdap: async (root, { input: { username, password } }, { req, res }) => {
+      req.body = await Object.assign({}, req.body, { username: username, password: password })
+      console.log('Start authentication with Ldap')
+      // data contains the accessToken, refreshToken and profile from passport
+      return authenticateLdapPromise(req, res)
+        // .then(({ data, info }) => data ? console.log(data) : throwErrorWithInfoFromPassport(info))
+        .then(({ data, info }) => data ? User.upsertLdapUser(data) : throwErrorWithInfoFromPassport(info))
         .then(user => user ? ({ user: user, token: user.generateJWT() }) : new Error('Server error with user'))
         .catch(err => { throw err })
     },

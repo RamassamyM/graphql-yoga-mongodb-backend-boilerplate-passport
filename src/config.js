@@ -25,3 +25,6 @@ export const FACEBOOK_CLIENT_ID = process.env.FACEBOOK_CLIENT_ID
 export const FACEBOOK_CLIENT_SECRET = process.env.FACEBOOK_CLIENT_SECRET
 export const JWT_PRIVATEKEY = fs.readFileSync(`${__dirname}/../${process.env.PATH_TO_PRIVATEKEY}`, 'utf8')
 export const JWT_PUBLICKEY = fs.readFileSync(`${__dirname}/../${process.env.PATH_TO_PUBLICKEY}`, 'utf8')
+export const LDAP_URL = process.env.LDAP_URL
+export const LDAP_BASE = process.env.LDAP_BASE
+export const PATH_TO_TLS_LDAP_PUBLIC_KEY = process.env.PATH_TO_TLS_LDAP_PUBLIC_KEY

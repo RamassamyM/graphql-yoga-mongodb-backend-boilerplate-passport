@@ -1,6 +1,6 @@
 import passport from 'passport'
 import FacebookStrategy from 'passport-facebook-token'
-// import FacebookStrategy from 'passport-facebook'
+// import FacebookStrategy from 'passport-facebook' // not working
 import { FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET } from '../../../config'
 
 export function setupFacebookTokenStrategy () {
