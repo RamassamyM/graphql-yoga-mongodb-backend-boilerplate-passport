@@ -60,7 +60,7 @@ Code is modularized in `src` directory:
 ###### Security, authentication, authorization
 - git is used with a .gitignore : .env file is ignored and contains secret environment variables : you have to recreate yours. [Dotenv](https://www.npmjs.com/package/dotenv) package is used to grab the environment variables from .env file. [Cross-env](https://www.npmjs.com/package/cross-env) package is used to start server giving variables in command line (ex : for production)
 - Authentication with node and graphql is not that easy as there is not any plataformec/device like complete package that exists. So this is a part to consider. Read these posts first : [1](https://hackernoon.com/your-node-js-authentication-tutorial-is-wrong-f1a3bf831a46) [2](https://github.com/P-H-C/phc-winner-argon2) [3](https://www.howtographql.com/advanced/4-security/) [4](https://expressjs.com/fr/advanced/best-practice-security.html) [5](https://www.codeheroes.fr/index.php/2018/03/23/securiser-une-api-rest/)
-- Authentication can be set by providing the currentUser (can be null) to the resolvers ([explanation](https://medium.com/the-guild/authentication-and-authorization-in-graphql-and-how-graphql-modules-can-help-fadc1ee5b0c2)) and implement an authenticated() method wrapper but it is better to use [schema directives]() to set all authentication and authorization rules (note : graphql [doc](https://graphql.org/learn/authorization/) suggest to avoid putting authorization logic and duplication in resolvers according to [single source of truth](https://graphql.org/learn/thinking-in-graphs/#business-logic-layer) rule.) in the GraphQL Schema : read [this](https://hackernoon.com/easy-peasy-graphql-authentication-and-authorization-using-schema-directives-f28f1845da20) and [this](https://blog.grandstack.io/authorization-in-graphql-using-custom-schema-directives-eafa6f5b4658) : 
+- Authentication can be set by providing the currentUser (can be null) to the resolvers ([explanation](https://medium.com/the-guild/authentication-and-authorization-in-graphql-and-how-graphql-modules-can-help-fadc1ee5b0c2)) and implement an authenticated() method wrapper but it is better to use [schema directives]() to set all authentication and authorization rules (note : graphql [doc](https://graphql.org/learn/authorization/) suggest to avoid putting authorization logic and duplication in resolvers according to [single source of truth](https://graphql.org/learn/thinking-in-graphs/#business-logic-layer) rule.) in the GraphQL Schema : read [this](https://hackernoon.com/easy-peasy-graphql-authentication-and-authorization-using-schema-directives-f28f1845da20) and [this](https://blog.grandstack.io/authorization-in-graphql-using-custom-schema-directives-eafa6f5b4658) :
 - uses `passport` for authentication with... TODO
 - Note : specs for authentication and authorization ([read](https://medium.com/the-guild/authentication-and-authorization-in-graphql-and-how-graphql-modules-can-help-fadc1ee5b0c2)) :
 We learned that a good implementation for GraphQL **authentication** has the following features regarding authentication:
@@ -77,6 +77,23 @@ You wish to run custom logics that protects parts of your GraphQL schema.
 Our custom rules should not be coupled to a specific resolver.
 
 - Security concerns : different security protections with [helmet](https://www.npmjs.com/package/helmet), express-rate-limit (todo), express-brute(todo), csurf(todo)
+
+- Authenticationwith JWT-token and passport :
+  - passport is a nice middleware for node JS app to handle authentication and manage permissions according routes. As Graphql has mainly only one route, it works differently :
+  - so there is a simple system that checks the jwt token and authenticate a user if it is possible then authorizations are handled by schema directives.
+  - to allow oauth authentication (third parties) and signup, we use passport strategies authentication and create GraphQL mutation to query third parties api, then create or udpate  the user and generate an internal jwt token that will be used like above. So passport is not used for all the system authentication but for using strategies authentication.
+  - for better security in generating jwt token, you can use RS256 instead of HS256 : you need in that case private/public keys as PEM and add paths in you .env file : to generate these keys :
+
+
+    ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key
+    openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
+
+If you want to use HS256 remove the algorithm in /utils/generateToken.js and /utils/verifyToken.js and add a secret key in .env file.
+To generate a secret key if you have python (>3.6) installed, go in python shell (you can try in your terminal `python`) and enter ([doc](https://blog.miguelgrinberg.com/post/the-new-way-to-generate-secure-tokens-in-python)):
+
+    import secrets
+    secrets.token_urlsafe(40)
+
 
 ###### Other tools
 - Sending emails with `nodemailer`

@@ -14,14 +14,13 @@ export function setupGoogleTokenStrategy () {
     profile,
   })
 
-  passport.use('google-token', new GoogleTokenStrategy(googleOptions, GoogleTokenStrategyCallback))
+  passport.use('google', new GoogleTokenStrategy(googleOptions, GoogleTokenStrategyCallback))
 }
 /* eslint-disable no-new */
-export function authenticateGoogle (req, res) {
+export function authenticateGooglePromise (req, res) {
   new Promise((resolve, reject) => {
-    passport.authenticate('google-token', { session: false }, (err, data, info) => {
-      if (err) reject(err)
-      resolve({ data, info })
+    passport.authenticate('google', { session: false }, (err, data, info) => {
+      err ? reject(err) : resolve({ data, info })
     })(req, res)
   })
 }

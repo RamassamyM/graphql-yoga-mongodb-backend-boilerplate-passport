@@ -4,13 +4,26 @@ import moment from 'moment'
 import User from '../../models/user.model'
 import { WrongCredentialsError, EmailError, DeleteError, EditError } from './user.errors'
 import getRandomAvatarColor from '../utils/getRandomAvatarColor'
-import { authenticateFacebook } from '../../setup/auth/strategies/facebookTokenStrategy'
-import { authenticateGoogle } from '../../setup/auth/strategies/googleTokenStrategy'
+import { authenticateFacebookPromise } from '../../setup/auth/strategies/facebookTokenStrategy'
+import { authenticateGooglePromise } from '../../setup/auth/strategies/googleTokenStrategy'
 // import { authenticated } from '../utils/authenticated'
 import _get from 'lodash/get'
 
 // The userLocationOnContext is defined in the creation of GraphqlServer in graphqlserver.js
 const userLocationInContext = 'req.currentUser'
+
+const throwErrorWithInfoFromPassport = (info) => {
+  if (info && info.code) {
+    switch (info.code) {
+      case 'ETIMEDOUT':
+        throw new Error('Failed to reach Authentication API: Try Again')
+      default:
+        throw new Error('Something went wrong with Authentication API')
+    }
+  } else {
+    throw new Error('Data Error with Authentication API')
+  }
+}
 
 export default {
   Query: {
@@ -23,70 +36,22 @@ export default {
   },
   Mutation: {
     authFacebook: async (root, { input: { accessToken } }, { req, res }) => {
-      try {
-        req.body = await Object.assign({}, req.body, { access_token: accessToken })
-        // data contains the accessToken, refreshToken and profile from passport
-        console.log('Start authenticate with Facebook')
-        const { data, info } = await authenticateFacebook(req, res)
-        // console.log(data)
-        if (data) {
-          const user = await User.upsertFacebookUser(data)
-          if (user) {
-            return ({
-              user: user,
-              token: await user.generateJWT(),
-            })
-          } else {
-            return new Error('Server error')
-          }
-        } else {
-          if (info) {
-            // console.log(info)
-            switch (info.code) {
-              case 'ETIMEDOUT':
-                return (new Error('Failed to reach Facebook: Try Again'))
-              default:
-                return (new Error('Something went wrong while trying to reach Facebook API'))
-            }
-          } else {
-            return new Error('No data received from Facebook authentication')
-          }
-        }
-      } catch (err) {
-        throw err
-      }
+      req.body = await Object.assign({}, req.body, { access_token: accessToken })
+      console.log('Start authentication with Facebook')
+      // data contains the accessToken, refreshToken and profile from passport
+      return authenticateFacebookPromise(req, res)
+        .then(({ data, info }) => data ? User.upsertFacebookUser(data) : throwErrorWithInfoFromPassport(info))
+        .then(user => user ? ({ user: user, token: user.generateJWT() }) : new Error('Server error with user'))
+        .catch(err => { throw err })
     },
     authGoogle: async (root, { input: { accessToken } }, { req, res }) => {
-      req.body = Object.assign({}, req.body, { access_token: accessToken })
-      try {
-        // data contains the accessToken, refreshToken and profile from passport
-        const { data, info } = await authenticateGoogle(req, res)
-        if (data) {
-          const user = await User.upsertGoogleUser(data)
-          if (user) {
-            return ({
-              user: user,
-              token: user.generateJWT(),
-            })
-          } else {
-            return new Error('Server error')
-          }
-        } else {
-          if (info) {
-            console.log(info)
-            switch (info.code) {
-              case 'ETIMEDOUT':
-                return (new Error('Failed to reach Google: Try Again'))
-              default:
-                return (new Error('Something went wrong while trying to reach Google API'))
-            }
-          } else {
-            return new Error('No data received from Google authentication')
-          }
-        }
-      } catch (err) {
-        throw err
-      }
+      req.body = await Object.assign({}, req.body, { access_token: accessToken })
+      console.log('Start authentication with Google')
+      // data contains the accessToken, refreshToken and profile from passport
+      return authenticateGooglePromise(req, res)
+        .then(({ data, info }) => data ? User.upsertGoogleUser(data) : throwErrorWithInfoFromPassport(info))
+        .then(user => user ? ({ user: user, token: user.generateJWT() }) : new Error('Server error with user'))
+        .catch(err => { throw err })
     },
     registerWithEmail: async (root, { email }, context) => {
       try {
@@ -136,7 +101,8 @@ export default {
         await delete args.__id
         return User.findOneAndUpdate(query, args, options)
       } catch (err) {
-        throw err
+        console.log(err)
+        throw new EditError('Error while trying to edit')
       }
     },
     deleteUserWithPassword: async (root, args, context) => {

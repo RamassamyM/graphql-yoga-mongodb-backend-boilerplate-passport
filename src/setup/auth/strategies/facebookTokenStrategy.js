@@ -17,16 +17,13 @@ export function setupFacebookTokenStrategy () {
       profile,
     })
   }
-  passport.use('facebook-token', new FacebookStrategy(facebookOptions, facebookTokenStrategyCallback))
+  passport.use('facebook', new FacebookStrategy(facebookOptions, facebookTokenStrategyCallback))
 }
 
-export function authenticateFacebook (req, res) {
+export function authenticateFacebookPromise (req, res) {
   return new Promise((resolve, reject) => {
-    passport.authenticate('facebook-token', { session: false }, (err, data, info) => {
-      if (err) {
-        reject(err)
-      }
-      resolve({ data, info })
+    passport.authenticate('facebook', { session: false }, (err, data, info) => {
+      err ? reject(err) : resolve({ data, info })
     })(req, res)
   })
 }
