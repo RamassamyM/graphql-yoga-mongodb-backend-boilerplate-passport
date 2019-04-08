@@ -207,7 +207,8 @@ Improvement plan
 
 - [ ] add [Flow](https://flow.org/en/docs/usage/) (read also this [post](https://codeburst.io/getting-started-with-flow-and-nodejs-b8442d3d2e57)) or [Typescript](https://www.typescriptlang.org/) for type annotations, type checking, code refactoring...
 - [ ] add CI (continuous integration) tool
-- [ ] protect from introspection in production
+- [x] protect from introspection in production
+- [ ] Add more security to tokens with short time token and longer time refreshtoken server side : [video](https://www.youtube.com/watch?v=UA0AIkjI85c), inclut aussi une autre façon d'authentifier le user en middleware plutôt que lors de la configuration du context.
 
 Contribute
 ----------
