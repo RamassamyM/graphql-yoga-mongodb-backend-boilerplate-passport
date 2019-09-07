@@ -86,7 +86,9 @@ Our custom rules should not be coupled to a specific resolver.
 
 
     ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key
+    
     openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
+    
 
 If you want to use HS256 remove the algorithm in /utils/generateToken.js and /utils/verifyToken.js and add a secret key in .env file.
 To generate a secret key if you have python (>3.6) installed, go in python shell (you can try in your terminal `python`) and enter ([doc](https://blog.miguelgrinberg.com/post/the-new-way-to-generate-secure-tokens-in-python)):
