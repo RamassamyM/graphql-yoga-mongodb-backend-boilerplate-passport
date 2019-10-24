@@ -53,7 +53,7 @@
     "apollo-server-errors": "^2.2.1",
     "compression": "^1.7.4",
     "moment": "^2.24.0",
-    "mongoose": "^5.4.20",
+    "mongoose": "^5.7.5",
     "nodemailer": "^5.1.1",
     "lodash": "^4.17.11",
     "jsonwebtoken": "^8.5.1",
