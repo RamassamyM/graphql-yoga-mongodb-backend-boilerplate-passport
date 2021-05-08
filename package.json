@@ -55,7 +55,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.4.20",
     "nodemailer": "^5.1.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "jsonwebtoken": "^8.5.1",
     "bcryptjs": "^2.4.3",
     "passport": "^0.4.0",
